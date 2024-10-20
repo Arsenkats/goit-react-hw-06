@@ -1,19 +1,22 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { nanoid } from "nanoid";
 import * as Yup from "yup";
 import css from "./ContactForm.module.css";
+import { useDispatch } from "react-redux";
+import { nanoid } from "@reduxjs/toolkit";
+import { addContact } from "../../redux/contactsSlice";
 const initialValues = {
   name: "",
   number: "",
 };
 
-const ContactForm = ({ handleAddContact }) => {
-  const handleSubmit = (values, options) => {
-    handleAddContact({
+const ContactForm = () => {
+  const onSubmit = (values, options) => {
+    const newContact = {
       id: nanoid(),
       name: values.name,
       number: values.number,
-    });
+    };
+    dispatch(addContact(newContact));
     options.resetForm();
   };
 
@@ -28,10 +31,11 @@ const ContactForm = ({ handleAddContact }) => {
       .max(50, "Number should be at most 50 characters")
       .required("Number is required"),
   });
+  const dispatch = useDispatch();
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={handleSubmit}
+      onSubmit={onSubmit}
       validationSchema={checkValues}
     >
       <Form className={css.form}>
